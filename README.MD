@@ -64,7 +64,7 @@ All values are in "big-endian" format (although ESP32's are natively
 
 Files all have 3-character names: The first char denotes the "main" digit being displayed, the second char is the digit being rolled to and the third is the step number 0-3. For example, the '0' digit file is named '000', the step files when rolling are named '011', '012', '013' and the final file in the sequence is '110' (as shown above).
 
-Although this format has a certain advantage in loading efficiency and is 1/3 smaller than a `.bmp` file, the processing savings are not as big as I originally imagined - the bulk of image loading time is spent in reading from the `LittleFS` file system which can vary by 100% simply based on where the file is located in the flash, and even the fastest reads are still 5 times longer than the time needed to actually process the data, whatever format it is in. Had I known this before, I would probably have stuck with the `.bmp` format as those files can be processed by manu other programs.
+Although this format has a certain advantage in loading efficiency and is 1/3 smaller than a `.bmp` file, the processing savings are not as big as I originally imagined - the bulk of image loading time is spent in reading from the `LittleFS` file system which can vary by 100% simply based on where the file is located in the flash, and even the fastest reads are still 5 times longer than the time needed to actually process the data, whatever format it is in. Had I known this before, I would probably have stuck with the `.bmp` format as those files can be processed by many other programs.
 
 Items you may wish to change in `flip_digits.py`:
 

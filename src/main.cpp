@@ -136,12 +136,15 @@ void loop() {
     int prevMins = hours * 60 + mins;
     if (hasTimeChanged(&hours, &mins)) {
       if (abs(hours * 60 + mins - prevMins) > 1) {
-        // DST change or catch-up with real time
+        // DST change or catch-up with real time: we don't have all the images
+        // neeeded to make flips from just any digit to any other, so we must
+        // wipe the display and start again
         setDigits(hours, mins);
         drawAllDigits(tft);
         babble("re-sync time");
       }
       else {
+        // "normal" one-minute increment
         updateDigits(hours, mins);
         doStep(tft);
         stepStart = now;
