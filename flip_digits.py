@@ -19,7 +19,6 @@ SCREEN_BG = "black"                         # screen background (black)
 DIGIT_BG = "#696969"                        # digits background (dim gray?)
 DIGIT_FG = "white"                          # digits text color
 DIGIT_SEP = "black"                         # "fold" line
-RAISE_COLON = True                          # adjust colon position higher
 FOLD_WIDTH = 4                              # fold line width
 OUT_PATH = 'data/'                          # output folder
 OUT_FORM = 'rgb565'                         # rgb565 | png | bmp | ...
@@ -34,7 +33,7 @@ digit_w = 0
 digit_h = 0
 
 
-def compute_sizes() -> (int, int, int):
+def compute_sizes() -> tuple[int, int, int]:
     """ Calculate largest font size that will fit on display, and the width and height
         of a resulting single digit image."""
     max_text = "12:34"
@@ -93,18 +92,22 @@ def saveImage(image: Image, filename: str):
 def make_colons():
     """ Create (narrower) colon image to align with digits without digit background or divider """
     font = ImageFont.truetype(FONT_FACE, font_size)
-    l, t, r, b = font.getbbox(':')
-    img = Image.new(mode="RGB", size=(r, digit_h), color=SCREEN_BG)
+    w = int(font.getlength(':'))    # use "real" colon width
+    img = Image.new(mode="RGB", size=(w, digit_h), color=SCREEN_BG)
     saveImage(img, 'colon0')        # colon off = blank
 
+    # draw two circles evenly positioned above/below center line
     drw = ImageDraw.Draw(img)
-    lr_center = r//2
-    if RAISE_COLON:         # try to center vertically
-        tb_top = (digit_h - (b - t))//2
-        drw.text((lr_center, tb_top), text=':', font=font, fill=DIGIT_FG, anchor="mt")
-    else:
-        drw.text((lr_center, digit_h//2), text=':', font=font, fill=DIGIT_FG, anchor="mm")
-
+    dot_r = w // 4
+    lr_center = w // 2
+    tb_upper = digit_h // 4             # 1/4 from top
+    x0, y0 = lr_center - dot_r, tb_upper - dot_r
+    x1, y1 = lr_center + dot_r, tb_upper + dot_r
+    drw.ellipse(((x0, y0), (x1, y1)), fill=DIGIT_FG)
+    tb_lower = digit_h - tb_upper       # 1/4 from bottom
+    x0, y0 = lr_center - dot_r, tb_lower - dot_r
+    x1, y1 = lr_center + dot_r, tb_lower + dot_r
+    drw.ellipse(((x0, y0), (x1, y1)), fill=DIGIT_FG)
     saveImage(img, 'colon1')        # colon on
 
 
@@ -179,9 +182,6 @@ print(f'Font size: {font_size}, digit w, h: {digit_w}, {digit_h}')
 digits = '01234567890'      # wrap around
 for i in range(len(digits)-1):
     make_images(digits[i:i+2])
-
-# Units with leading blanks (9 -> ' ')
-make_images('9x')
 
 # Minutes tens wrap (59 -> 00)
 make_images('50')
