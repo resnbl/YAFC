@@ -1,33 +1,39 @@
-/*
-  Contain and manipulation the digit character images on screen.
-*/
+#ifndef _CLOCK_DIGIT_H_
+#define _CLOCK_DIGIT_H_
+
 #include <TFT_eSPI.h>
-#include "appInfo.h"
+#include "rgb565.h"
 
-typedef struct {
-  const char* digits;     // allowed chars used in filenames
-  int posX, posY;         // screen position
-  int currIdx, nextIdx;   // indicies into digits
-  int step;               // > 0 => rolling step
-} ClockDigit;
+#define MAX_STEP 4
 
-// Initialize digits' screen position w/ int[NUM_DIGITS * 2]
-void setDigitPos(int *positions);
+class ClockDigit {
+public:
+  ClockDigit() {};
+  ClockDigit(const char* digits) : digitSet(digits) {}
 
-// Change time display format
-void setDisplayFormat(DISP_FMT fmt);
+  // Set the list of available digit characters to be displayed.
+  void setDigitList(const char* digits);
 
-// "Reset" clock to specified hours/minutes
-void setDigits(int hours, int mins);
+  // Save the image size, position, etc.
+  void saveInfo(ImageInfo& info) { imgInfo = info; }
 
-// Update display every minute
-void updateDigits(int hours, int mins);
+  // Set the next digit to "flip" to
+  void setDigit(int digit, bool mayStep);
 
-// True if digits are currently being "rolled"
-bool areStepping();
+  // Load the digit's image file and display on screen
+  void draw(TFT_eSPI& tft);
+  
+  // Animate digit flip
+  bool doStep(TFT_eSPI& tft);
 
-// Initial display of digits
-void drawAllDigits(TFT_eSPI& tft);
+  int currIdx = 0;    // index into digitset for current digit value
+  int nextIdx = 0;    // index into digitset for next digit value when stepping
+  int step = 0;       // "flip" step (0 - MAX_STEP-1)
 
-// Roll next digit one step
-void doStep(TFT_eSPI& tft);
+private:
+  const char* digitSet;
+  ImageInfo imgInfo;
+  char fnBuff[16] = "/xxx.rgb565";
+};
+
+#endif    // _CLOCK_DIGIT_H_

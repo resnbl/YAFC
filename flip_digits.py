@@ -3,7 +3,7 @@ Generate images of digits for use in a "flip clock".
 This includes whole digit images as well as combined "previous" digit" and
 "new digit" to show a limited animation.
 Output is in .png | .jpg | .bmp format for use in desktop programs
-or in a custom RGB565 format for use on a ESP32 micro-controller.
+or in a custom RGB565 format for use with a particular TFT display.
 """
 import PIL
 from PIL import Image, ImageDraw, ImageFont
@@ -20,10 +20,10 @@ DIGIT_BG = "#696969"                        # digits background (dim gray?)
 DIGIT_FG = "white"                          # digits text color
 DIGIT_SEP = "black"                         # "fold" line
 FOLD_WIDTH = 4                              # fold line width
-OUT_PATH = 'data/'                          # output folder
-OUT_FORM = 'rgb565'                         # rgb565 | png | bmp | ...
-# OUT_PATH = 'pngs/'                          # output folder
-# OUT_FORM = 'png'                            # rgb565 | png | bmp | ...
+# OUT_PATH = 'data/'                          # output folder
+# OUT_FORM = 'rgb565'                         # rgb565 | png | bmp | ...
+OUT_PATH = 'pngs/'                          # output folder
+OUT_FORM = 'png'                            # rgb565 | png | bmp | ...
 BLANK_FLAG = 'x'                            # safe replacement for ' ' in filenames
 
 
@@ -172,9 +172,7 @@ def make_images(text='01'):
 
 
 # main program:
-# skip re-computing if values are known
-if font_size == 0 or digit_w == 0 or digit_h == 0:
-    font_size, digit_w, digit_h = compute_sizes()
+font_size, digit_w, digit_h = compute_sizes()
 
 print(f'Font size: {font_size}, digit w, h: {digit_w}, {digit_h}')
 
