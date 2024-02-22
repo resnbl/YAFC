@@ -26,6 +26,8 @@ First, either rename or make a copy of the `my-secrets.h` file as `secrets.h` an
 
 The `flipclock.h` file contains definitions you may wish to change, including your host name and time zone. You can also choose the intial time display format with the `INITIAL_DISP_FMT` definition.
 
+The `partitions_16M_app6M_data3M.csv` file may require modification if you wish to use a different device partition layout.
+
 ## Modules
 
 Below are brief descriptions of the code. Additional information is in the comments in each.
